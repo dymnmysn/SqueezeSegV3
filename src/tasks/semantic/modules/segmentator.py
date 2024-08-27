@@ -6,7 +6,10 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from src.tasks.semantic.postproc.CRF import CRF
-import __init__ as booger
+#import __init__ as booger #bura benden
+class booger:
+  TRAIN_PATH = "src"
+  
 
 class Segmentator(nn.Module):
   def __init__(self, ARCH, nclasses, path=None, path_append="", strict=False):
