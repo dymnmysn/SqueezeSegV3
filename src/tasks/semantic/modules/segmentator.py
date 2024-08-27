@@ -5,7 +5,7 @@ import imp
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from tasks.semantic.postproc.CRF import CRF
+from src.tasks.semantic.postproc.CRF import CRF
 import __init__ as booger
 
 class Segmentator(nn.Module):
