@@ -7,7 +7,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from tasks.semantic.postproc.CRF import CRF
 #import __init__ as booger
-class booger
+class booger:
   TRAIN_PATH = "/kaggle/working/SqueezeSegV3/src"
 
 class Segmentator(nn.Module):
