@@ -211,19 +211,19 @@ class Segmentator(nn.Module):
     y = self.decoder(feature, skips)
       
     z1 = self.head5(y[0])
-    z1 = F.softmax(z1,dim=1)
+    #z1 = F.softmax(z1,dim=1)
 
     z2 = self.head4(y[1])
-    z2 = F.softmax(z2,dim=1)
+    #z2 = F.softmax(z2,dim=1)
 
     z3 = self.head3(y[2])
-    z3 = F.softmax(z3,dim=1)
+    #z3 = F.softmax(z3,dim=1)
 
     z4 = self.head2(y[3])
-    z4 = F.softmax(z4,dim=1)
+    #z4 = F.softmax(z4,dim=1)
 
     z5 = self.head1(y[4])
-    z5 = F.softmax(z5,dim=1)
+    #z5 = F.softmax(z5,dim=1)
 
     return [z1, z2, z3, z4, z5]
 
