@@ -14,7 +14,7 @@ class Segmentator(nn.Module):
   def __init__(self, ARCH, nclasses, path=None, path_append="", strict=False):
     super().__init__()
     self.ARCH = ARCH
-    self.nclasses = 20
+    self.nclasses = 23
     self.path = path
     self.path_append = path_append
     self.strict = False
