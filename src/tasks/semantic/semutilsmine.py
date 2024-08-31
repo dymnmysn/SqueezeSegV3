@@ -1,6 +1,7 @@
 import open3d as o3d
 import numpy as np
 import matplotlib.pyplot as plt
+import torch
 
 def visualize_point_cloud_with_segmentation(point_cloud, segmentation_classes, num_classes=3):
     # Reshape the point cloud to (N, 3)
@@ -76,3 +77,37 @@ def convert_range_image_to_point_cloud(range_image, beam_inclination, horizontal
 
 
 #point_cloud = convert_range_image_to_point_cloud(range_image, beam_inclination)
+
+def generate_azimuth_angles_torch(num_horizontal_points):
+    return torch.linspace(-180, 0, num_horizontal_points, endpoint=False)
+
+def convert_range_image_to_point_cloud_torch(range_image, beam_inclination, horizontal_fov=360.0):
+    # Get the shape of the range image
+    num_beams, num_horizontal_points = range_image.shape
+    
+    # Generate azimuth angles
+    azimuth_angles = generate_azimuth_angles_torch(num_horizontal_points)
+    
+    # Convert angles from degrees to radians
+    azimuth_rad = torch.radians(torch.tensor(azimuth_angles))
+    elevation_rad = beam_inclination  # Assuming beam_inclination is already a tensor in radians
+    
+    # Initialize tensors for point cloud
+    x_coords = torch.zeros_like(range_image)
+    y_coords = torch.zeros_like(range_image)
+    z_coords = torch.zeros_like(range_image)
+    
+    # Compute Cartesian coordinates for each point
+    for i in range(num_beams):
+        x_coords[i, :] = range_image[i, :] * torch.cos(elevation_rad[i]) * torch.cos(azimuth_rad)
+        y_coords[i, :] = range_image[i, :] * torch.cos(elevation_rad[i]) * torch.sin(azimuth_rad)
+        z_coords[i, :] = range_image[i, :] * torch.sin(elevation_rad[i])
+    
+    # Stack the coordinates to form a point cloud
+    point_cloud = torch.stack([x_coords, y_coords, z_coords], axis=-1)
+    
+    return point_cloud
+
+
+
+
