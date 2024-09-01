@@ -48,7 +48,7 @@ def visualize_point_cloud(point_cloud):
 
 def generate_azimuth_angles(num_horizontal_points):
     # Generate azimuth angles evenly spaced from 0 to 360 degrees
-    return np.linspace(-180, 180, num_horizontal_points, endpoint=False)
+    return np.linspace(0, 360, num_horizontal_points, endpoint=False)
 
 def convert_range_image_to_point_cloud(range_image, beam_inclination, horizontal_fov=360.0):
     # Get the shape of the range image
