@@ -2,8 +2,9 @@ import open3d as o3d
 import numpy as np
 import matplotlib.pyplot as plt
 import torch
-from scipy.ndimage import generic_filter
+from scipy.ndimage import generic_filter, convolve
 from scipy.stats import mode
+
 
 def visualize_point_cloud_with_segmentation(point_cloud, segmentation_classes, num_classes=3):
     # Reshape the point cloud to (N, 3)
@@ -172,4 +173,28 @@ def interpolate_pixel_with_majority_check3(values):
 def interpolate_nan_pixels_with_majority3(image):
     return generic_filter(image, interpolate_pixel_with_majority_check3, size=3, mode='constant', cval=0)
 
+def fast_interpolate(arr, thresholds=[5, 3]):
+    mask = (arr == -1)
+    
+    # Define a 3x3 kernel for counting neighbors
+    kernel = np.ones((3, 3))
+    kernel[1, 1] = 0  # Do not count the center pixel itself
+    
+    for threshold in thresholds:
+        # Update the mask for -1 pixels
+        mask = (arr == -1)
+        mmask = (~mask).astype(np.int8)
+        
+        # Count valid neighbors by applying convolution
+        valid_neighbor_count = convolve(mmask, kernel, mode='constant', cval=0)
 
+        # Compute the sum of valid neighbors
+        neighbor_sum = convolve(np.where(mask, 0, arr), kernel, mode='constant', cval=0)
+
+        # Find pixels that should be interpolated
+        interpolate_mask = (valid_neighbor_count >= threshold) & mask
+
+        # Interpolate those pixels by dividing the sum by the number of valid neighbors
+        arr[interpolate_mask] = neighbor_sum[interpolate_mask] / valid_neighbor_count[interpolate_mask]
+
+    return arr
