@@ -2,6 +2,8 @@ import open3d as o3d
 import numpy as np
 import matplotlib.pyplot as plt
 import torch
+from scipy.ndimage import generic_filter
+from scipy.stats import mode
 
 def visualize_point_cloud_with_segmentation(point_cloud, segmentation_classes, num_classes=3):
     # Reshape the point cloud to (N, 3)
@@ -109,5 +111,65 @@ def convert_range_image_to_point_cloud_torch(range_image, beam_inclination, hori
     return point_cloud
 
 
+def interpolate_pixel3(values):
+    center = values[4]  # The central pixel
+    if center != -1:
+        return center
+
+    valid_values = values[values != -1]
+    if len(valid_values) >= 3:
+        return np.mean(valid_values)
+    else:
+        return center
+
+def interpolate_nan_pixels3(image):
+    return generic_filter(image, interpolate_pixel3, size=3, mode='constant', cval=-1)
+
+def interpolate_pixel5(values):
+    center = values[4]  # The central pixel
+    if center != -1:
+        return center
+
+    valid_values = values[values != -1]
+    if len(valid_values) >= 3:
+        return np.mean(valid_values)
+    else:
+        return center
+
+def interpolate_nan_pixels5(image):
+    return generic_filter(image, interpolate_pixel5, size=3, mode='constant', cval=-1)
+
+
+def interpolate_pixel_with_majority_check5(values):
+    center = values[4] 
+    
+    if center != 0:
+        return center
+    
+    valid_values = values[values != 0]
+    
+    if len(valid_values) >= 5:
+        return mode(valid_values)[0]
+    else:
+        return center
+
+def interpolate_nan_pixels_with_majority5(image):
+    return generic_filter(image, interpolate_pixel_with_majority_check5, size=3, mode='constant', cval=0)
+
+def interpolate_pixel_with_majority_check3(values):
+    center = values[4] 
+    
+    if center != 0:
+        return center
+    
+    valid_values = values[values != 0]
+    
+    if len(valid_values) >= 5:
+        return mode(valid_values)[0]
+    else:
+        return center
+
+def interpolate_nan_pixels_with_majority3(image):
+    return generic_filter(image, interpolate_pixel_with_majority_check3, size=3, mode='constant', cval=0)
 
 
